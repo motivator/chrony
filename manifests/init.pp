@@ -21,25 +21,38 @@
 # @param service_manage [Boolean] Whether to manage the chrony service. Default value: true.
 # @param service_name [String] The name of chrony's service. Default value: varies by OS.
 class chrony (
-  Boolean $client_allow,
-  Optional[Array[String]] $client_sources,
-  Stdlib::Absolutepath $config,
-  String $config_file_mode,
-  Stdlib::Absolutepath $driftfile,
-  Stdlib::Absolutepath $keyfile,
-  String $package_ensure,
-  Boolean $package_manage,
-  String $package_name,
-  Boolean $pool_use,
-  String $pool_address,
-  Integer[1] $pool_maxservers,
-  Boolean $pool_iburst,
-  Array[String] $servers,
-  Boolean $service_enable,
-  String $service_ensure,
-  Boolean $service_manage,
-  String $service_name,
+  $client_allow     = false,
+  $client_sources   = [],
+  $config           = '/etc/chrony/chrony.conf',
+  $config_file_mode = '0664',
+  $driftfile        = '/var/lib/chrony/drift',
+  $keyfile          = '/etc/chrony/chrony.keys',
+  $package_ensure   = 'present',
+  $package_manage   = true,
+  $package_name     = 'chrony',
+  $pool_use         = true,
+  $pool_address     = 'pool.ntp.org',
+  $pool_maxservers  = 4,
+  $pool_iburst      = true,
+  $servers          = [],
+  $service_enable   = true,
+  $service_ensure   = 'running',
+  $service_manage   = true,
+  $service_name     = '',
 ) {
+  validate_bool($client_allow)
+  validate_array($client_sources)
+  validate_absolute_path($config)
+  validate_absolute_path($driftfile)
+  validate_absolute_path($keyfile)
+  validate_bool($package_manage)
+  validate_bool($pool_use)
+  validate_integer($pool_maxservers)
+  validate_bool($pool_iburst)
+  validate_array($servers)
+  validate_bool($service_enable)
+  validate_bool($service_manage)
+
   contain chrony::install
   contain chrony::config
   contain chrony::service
